@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DeployOwl Edge Test Site</title>
+  <!-- Modern Google Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --bg-dark: #090a0f;
+      --card-bg: rgba(17, 19, 31, 0.65);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-gradient: linear-gradient(135deg, #818cf8 0%, #6366f1 50%, #4f46e5 100%);
+      --accent: #a78bfa;
+      --success: #34d399;
+      --error: #f87171;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Vibrant background gradients */
+    body::before {
+      content: '';
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, rgba(0,0,0,0) 70%);
+      top: -10%;
+      left: 10%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, rgba(0,0,0,0) 70%);
+      bottom: -10%;
+      right: 5%;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 540px;
+      padding: 24px;
+      z-index: 10;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    header h1 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 2.5rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      background: linear-gradient(to right, #ffffff, #c7d2fe, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    /* Glassmorphism Card styling */
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 24px;
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      padding: 36px;
+      width: 100%;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 28px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 500;
+      padding: 12px;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.2s ease;
+    }
+
+    .tab-btn.active {
+      color: var(--text-main);
+    }
+
+    .tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--primary-gradient);
+    }
+
+    .form-section {
+      display: none;
+    }
+
+    .form-section.active {
+      display: block;
+      animation: fadeIn 0.4s ease;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      color: var(--text-main);
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .form-group input {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      color: white;
+      font-family: inherit;
+      font-size: 1rem;
+      padding: 14px 16px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .btn {
+      width: 100%;
+      background: var(--primary-gradient);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(99, 102, 241, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    /* File upload design */
+    .dropzone {
+      border: 2px dashed rgba(99, 102, 241, 0.3);
+      border-radius: 16px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(99, 102, 241, 0.02);
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .dropzone:hover, .dropzone.dragover {
+      border-color: var(--primary);
+      background: rgba(99, 102, 241, 0.06);
+    }
+
+    .dropzone svg {
+      width: 48px;
+      height: 48px;
+      color: var(--primary);
+      margin-bottom: 12px;
+    }
+
+    .dropzone p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    .dropzone span {
+      display: block;
+      font-size: 0.8rem;
+      color: rgba(156, 163, 175, 0.7);
+      margin-top: 6px;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--error);
+      font-size: 0.9rem;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .logout-btn:hover {
+      text-decoration: underline;
+    }
+
+    /* Notification message */
+    .status-msg {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .status-msg.success {
+      background: rgba(52, 211, 153, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(52, 211, 153, 0.2);
+      display: block;
+    }
+
+    .status-msg.error {
+      background: rgba(248, 113, 113, 0.1);
+      color: var(--error);
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      display: block;
+    }
+
+    /* Gallery space */
+    .gallery {
+      margin-top: 24px;
+    }
+
+    .gallery h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      margin-bottom: 12px;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 1;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.3s ease;
+    }
+
+    .gallery-item:hover img {
+      transform: scale(1.1);
+    }
+
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      z-index: 10;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>DeployOwl edge site</h1>
+      <p>Protected by OwlGuard • Stored in OwlNoSQL & OwlStorage</p>
+    </header>
+
+    <div class="card">
+      <!-- Unauthenticated Mode -->
+      <div id="authContainer">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('login')">Login</button>
+          <button class="tab-btn" onclick="switchTab('signup')">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="loginFormSection" class="form-section active">
+          <form onsubmit="handleAuth(event, 'login')">
+            <div class="form-group">
+              <label for="loginEmail">Email Address</label>
+              <input type="email" id="loginEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Password</label>
+              <input type="password" id="loginPassword" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn">Access Dashboard</button>
+          </form>
+        </div>
+
+        <!-- Signup Form -->
+        <div id="signupFormSection" class="form-section">
+          <form onsubmit="handleAuth(event, 'signup')">
+            <div class="form-group">
+              <label for="signupEmail">Email Address</label>
+              <input type="email" id="signupEmail" placeholder="you@example.com" required>
+            </div>
+            <div class="form-group">
+              <label for="signupPassword">Password</label>
+              <input type="password" id="signupPassword" placeholder="••••••••" required>
+            </div>
+            <button type="submit" class="btn">Create Account</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Authenticated Mode -->
+      <div id="dashboardContainer" style="display: none;">
+        <div class="user-info">
+          <div>
+            <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Logged in as</span>
+            <strong id="userEmailDisplay" style="font-family: 'Space Grotesk', sans-serif;"></strong>
+          </div>
+          <button class="logout-btn" onclick="handleLogout()">Log out</button>
+        </div>
+
+        <h3 style="font-family: 'Space Grotesk', sans-serif; margin-bottom: 12px; font-size: 1.1rem;">Upload Image</h3>
+        <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          </svg>
+          <p>Drag & drop image here or <strong>browse</strong></p>
+          <span>Supports PNG, JPG, GIF, WebP</span>
+          <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="handleFileSelect(event)">
+        </div>
+
+        <div class="gallery" id="gallerySection" style="display: none;">
+          <h3>Uploaded Images</h3>
+          <div class="gallery-grid" id="galleryGrid"></div>
+        </div>
+      </div>
+
+      <!-- Status alerts -->
+      <div id="statusAlert" class="status-msg"></div>
+    </div>
+
+    <div class="footer">
+      Powered by DeployWeb Serverless Engine
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '/api/app';
+    let currentUser = null;
+    let uploadedImages = [];
+
+    // Switch between Signup/Login tabs
+    function switchTab(type) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.form-section').forEach(sec => sec.classList.remove('active'));
+      
+      if (type === 'login') {
+        document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        document.getElementById('loginFormSection').classList.add('active');
+      } else {
+        document.querySelectorAll('.tab-btn')[1].classList.add('active');
+        document.getElementById('signupFormSection').classList.add('active');
+      }
+      clearAlert();
+    }
+
+    function showAlert(msg, isError = false) {
+      const alertDiv = document.getElementById('statusAlert');
+      alertDiv.className = `status-msg ${isError ? 'error' : 'success'}`;
+      alertDiv.textContent = msg;
+    }
+
+    function clearAlert() {
+      const alertDiv = document.getElementById('statusAlert');
+      alertDiv.className = 'status-msg';
+      alertDiv.style.display = 'none';
+    }
+
+    // Handles sign up and login requests
+    async function handleAuth(event, type) {
+      event.preventDefault();
+      clearAlert();
+
+      const email = type === 'login' 
+        ? document.getElementById('loginEmail').value 
+        : document.getElementById('signupEmail').value;
+      const password = type === 'login' 
+        ? document.getElementById('loginPassword').value 
+        : document.getElementById('signupPassword').value;
+
+      try {
+        const response = await fetch(`${API_BASE}?action=${type}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || 'Authentication failed');
+        }
+
+        if (type === 'signup') {
+          showAlert('Registration successful! You can now log in.');
+          switchTab('login');
+        } else {
+          currentUser = data.user;
+          localStorage.setItem('user', JSON.stringify(currentUser));
+          renderDashboard();
+        }
+      } catch (err) {
+        showAlert(err.message, true);
+      }
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('user');
+      uploadedImages = [];
+      document.getElementById('authContainer').style.display = 'block';
+      document.getElementById('dashboardContainer').style.display = 'none';
+      document.getElementById('galleryGrid').innerHTML = '';
+      document.getElementById('gallerySection').style.display = 'none';
+      clearAlert();
+    }
+
+    function renderDashboard() {
+      if (!currentUser) return;
+      document.getElementById('authContainer').style.display = 'none';
+      document.getElementById('dashboardContainer').style.display = 'block';
+      document.getElementById('userEmailDisplay').textContent = currentUser.email;
+      clearAlert();
+    }
+
+    // Image Upload handler
+    async function uploadFile(file) {
+      clearAlert();
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        showAlert('Uploading to OwlStorage...');
+        const response = await fetch(`${API_BASE}?action=upload`, {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Upload failed');
+        }
+
+        showAlert('Image uploaded successfully!');
+        uploadedImages.push(data.url);
+        renderGallery();
+      } catch (err) {
+        showAlert(err.message, true);
+      }
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) uploadFile(file);
+    }
+
+    function renderGallery() {
+      const grid = document.getElementById('galleryGrid');
+      grid.innerHTML = '';
+      
+      if (uploadedImages.length > 0) {
+        document.getElementById('gallerySection').style.display = 'block';
+        uploadedImages.forEach(url => {
+          const item = document.createElement('div');
+          item.className = 'gallery-item';
+          item.title = 'Click to open URL';
+          item.onclick = () => window.open(url, '_blank');
+          
+          const img = document.createElement('img');
+          img.src = url;
+          
+          item.appendChild(img);
+          grid.appendChild(item);
+        });
+      }
+    }
+
+    // Drag and drop setup
+    const dropzone = document.getElementById('dropzone');
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('dragover');
+    });
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('dragover');
+    });
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        uploadFile(file);
+      } else {
+        showAlert('Please upload a valid image file.', true);
+      }
+    });
+
+    // Check localStorage session on load
+    window.onload = () => {
+      const savedUser = localStorage.getItem('user');
+      if (savedUser) {
+        currentUser = JSON.parse(savedUser);
+        renderDashboard();
+      }
+    };
+  </script>
+</body>
+</html>
