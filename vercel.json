@@ -1,0 +1,1 @@
+{\n  "version": 2,\n  "builds": [\n    {\n      "src": "package.json",\n      "use": "@vercel/static-build",\n      "config": {\n        "distDir": "dist"\n    }\n    }\n  ],\n  "rewrites": [\n    { "source": "/(.*)", "destination": "/" }\n  ]\n}
