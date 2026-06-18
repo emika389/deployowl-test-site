@@ -1,2 +1,45 @@
-{
-  "deployConfig": "name: Deploy to DeployOwl\n\non:\n  push:\n    branches:\n      - main\n  workflow_dispatch:\n    inputs:\n      dispatch_token:\n        description: 'Manual Dispatch Token'\n        required: false\n        default: ''\n\njobs:\n  build-and-deploy:\n    runs-on: ubuntu-latest\n\n    steps:\n      - name: Checkout code\n        uses: actions/checkout@v3\n\n      - name: Set up Node.js\n        uses: actions/setup-node@v3\n        with:\n          node-version: '14'\n\n      - name: Install dependencies\n        run: npm install\n\n      - name: Build application\n        run: npm run build\n\n      - name: Determine build output directory\n        id: determine_output_dir\n        run: |\n          if [ -d \"dist\" ]; then\n            echo \"::set-output name=output_dir::dist\"\n          elif [ -d \"out\" ]; then\n            echo \"::set-output name=output_dir::out\"\n          elif [ -d \"build\" ]; then\n            echo \"::set-output name
+name: Deploy to DeployOwl
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      dispatch_token:
+        description: 'Manual Dispatch Token'
+        required: false
+        default: ''
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build application
+        run: npm run build
+
+      - name: Determine build output directory
+        id: build_output
+        run: |
+          if [ -d "dist" ]; then
+            echo "dir=dist" >> $GITHUB_OUTPUT
+          elif [ -d "out" ]; then
+            echo "dir=out" >> $GITHUB_OUTPUT
+          elif [ -d "build" ]; then
+            echo "dir=build" >> $GITHUB_OUTPUT
+          else
+            echo "No build directory found"
+            exit 1
+          fi
